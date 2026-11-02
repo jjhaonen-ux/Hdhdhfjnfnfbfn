@@ -206,7 +206,7 @@ class _Collector implements Sink<List<int>> {
 Uint8List deflateZeros(int length) {
   final collector = _Collector();
   final sink =
-      const ZLibEncoder(raw: true, level: 1).startChunkedConversion(collector);
+      ZLibEncoder(raw: true, level: 1).startChunkedConversion(collector);
   final chunk = Uint8List(1024 * 1024);
   var left = length;
   while (left > 0) {
