@@ -70,7 +70,7 @@ jobs:
       - name: Test
         run: |
           if [ -d test ] && [ -n "$(find test -name '*_test.dart' -print -quit)" ]; then
-            flutter test
+            flutter test --reporter failures-only
           else
             echo "لا توجد اختبارات بعد — تم التخطي."
           fi
