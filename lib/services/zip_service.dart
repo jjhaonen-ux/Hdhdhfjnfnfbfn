@@ -251,6 +251,21 @@ class ZipService {
     }
   }
 
+  /// Decodes the ZIP central directory. Kept in its own function (instead of
+  /// a `final Archive archive;` assigned inside try/catch in [_extractSync])
+  /// to avoid a Dart VM optimizing-compiler crash seen in flutter_tester
+  /// ("src.constant().ptr() != Object::optimized_out().ptr()").
+  static Archive _decodeArchive(InputFileStream input) {
+    try {
+      // No `verify:` here on purpose: it would inflate every entry into
+      // memory before any size limit is applied. The CRC is checked later,
+      // from the bytes that were written to disk.
+      return ZipDecoder().decodeStream(input);
+    } catch (e) {
+      throw ZipFailure('تعذر قراءة ملف ZIP — قد يكون تالفًا (${e.runtimeType})');
+    }
+  }
+
   /// Runs inside the isolate. Returns a message made only of sendable
   /// primitives: `['done', files, skipped, totalBytes, wrapperFolder]`.
   /// Files travel as `[absPath, relativePath, size, executable]` and skipped
@@ -263,15 +278,7 @@ class ZipService {
     final input = InputFileStream(zipPath);
     final workDir = Directory(workDirPath);
     try {
-      final Archive archive;
-      try {
-        // No `verify:` here on purpose: it would inflate every entry into
-        // memory before any size limit is applied. The CRC is checked below,
-        // from the bytes that were written to disk.
-        archive = ZipDecoder().decodeStream(input);
-      } catch (e) {
-        throw ZipFailure('تعذر قراءة ملف ZIP — قد يكون تالفًا (${e.runtimeType})');
-      }
+      final archive = _decodeArchive(input);
 
       final skipped = <List<String>>[];
       final candidates = <ArchiveFile>[];
