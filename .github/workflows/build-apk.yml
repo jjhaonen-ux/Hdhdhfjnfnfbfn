@@ -70,7 +70,12 @@ jobs:
       - name: Test
         run: |
           if [ -d test ] && [ -n "$(find test -name '*_test.dart' -print -quit)" ]; then
-            flutter test --reporter failures-only
+            flutter test --reporter failures-only > test.log 2>&1 || {
+              echo "=== أول 80 سطرًا من سجل الفشل ==="
+              head -80 test.log
+              exit 1
+            }
+            tail -3 test.log
           else
             echo "لا توجد اختبارات بعد — تم التخطي."
           fi
