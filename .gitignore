@@ -1,0 +1,14 @@
+.dart_tool/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+.idea/
+local.properties
+
+# أسرار التوقيع: لا تُرفع إلى GitHub أبدًا
+key.properties
+*.jks
+*.keystore
+
+# pubspec.lock يُرفع عمدًا: هذا تطبيق لا مكتبة، فيجب تثبيت إصدارات الحزم.
